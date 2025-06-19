@@ -2,7 +2,7 @@
 /*
 Plugin Name: New Order Notification for Woocommerce
 Description: Woocommerce custom order page with recent orders for showing a popup notification with sound when a new order received.
-Version: 2.0.3
+Version: 2.0.4
 Author: Mr.Ebabi
 Author URI: https://github.com/MrEbabi
 License: GPL2
@@ -90,19 +90,20 @@ function new_order_notification_fontawesome()
 
 add_action('admin_init', 'new_order_notification_fontawesome');
 
-add_action( 'admin_head', 'new_order_notification_inline_nonce' );
-function new_order_notification_inline_nonce() {
+add_action('admin_head', 'new_order_notification_inline_nonce');
+function new_order_notification_inline_nonce()
+{
     $screen = get_current_screen();
 
-    if ( $screen->id !== 'new_order_notification' ) {
+    if ($screen->id !== 'toplevel_page_new_order_notification') {
         return;
     }
     ?>
     <script type="text/javascript">
-    var NewOrderNotif = {
-        ajax_url: "<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>",
-        nonce:    "<?php echo wp_create_nonce( 'noneni_action' ); ?>"
-    };
+        var NewOrderNotif = {
+            ajax_url: "<?php echo esc_js(admin_url('admin-ajax.php')); ?>",
+            nonce: "<?php echo wp_create_nonce('noneni_action'); ?>"
+        };
     </script>
     <?php
 }
