@@ -2,14 +2,14 @@
 /*
 Plugin Name: New Order Notification for Woocommerce
 Description: Woocommerce custom order page with recent orders for showing a popup notification with sound when a new order received.
-Version: 2.1.0
+Version: 2.1.1
 Author: Mr.Ebabi
 Author URI: https://github.com/MrEbabi
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: new-order-notification-for-woocommerce
 WC requires at least: 2.5
-WC tested up to: 9.9.4
+WC tested up to: 10.8.1
 */
 
 if (!defined('ABSPATH')) {
@@ -20,7 +20,7 @@ define('NONW_PLUGIN_FILE', __FILE__);
 define('NONW_PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('NONW_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('NONW_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('NONW_VERSION', '2.1.0');
+define('NONW_VERSION', '2.1.1');
 
 if (!class_exists('New_Order_Notification_For_WooCommerce')) {
 
@@ -155,12 +155,7 @@ if (!class_exists('New_Order_Notification_For_WooCommerce')) {
 
             wp_enqueue_script('jquery');
 
-            wp_enqueue_style(
-                'nonw-fontawesome',
-                'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
-                array(),
-                '5.8.1'
-            );
+            wp_enqueue_style('dashicons');
         }
 
         public function inline_nonce_js()
@@ -198,6 +193,13 @@ if (!class_exists('New_Order_Notification_For_WooCommerce')) {
 
 add_action('wp_ajax_nonw_apply_defaults', function () {
     check_ajax_referer('nonw_defaults_nonce', 'nonce');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(
+            array('message' => __('You are not allowed to change these settings.', 'new-order-notification-for-woocommerce')),
+            403
+        );
+    }
 
     update_option('nonw_settings', NONW_Settings::defaults());
 

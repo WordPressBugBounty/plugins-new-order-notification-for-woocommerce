@@ -3,8 +3,8 @@ Contributors: mrebabi
 Author URI: https://github.com/MrEbabi
 Tags: woocommerce, order notification, order alert, popup notification, sound alert, new order
 Requires at least: 5.0
-Tested up to: 6.9
-Stable tag: 2.1.0
+Tested up to: 7.0
+Stable tag: 2.1.1
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: new-order-notification-for-woocommerce
@@ -47,7 +47,7 @@ If you’d like to suggest new features or report a bug, please contact:
 
 = Does this plugin work with the latest WordPress and WooCommerce versions? =
 
-Yes. The plugin is tested with WordPress 6.9 and recent WooCommerce versions. You are welcome to report any issues so they can be fixed quickly.
+Yes. The plugin is tested with WordPress 7.0 and recent WooCommerce versions. You are welcome to report any issues so they can be fixed quickly.
 
 = Can we still use the standard WooCommerce Orders page while using this plugin? =
 
@@ -61,6 +61,14 @@ Yes. You can still use the default WooCommerce Orders page. The popup and sound 
 4. Settings page for notifications.
 
 == Changelog ==
+
+= 2.1.1 =
+* Tested with WordPress 7.0 and WooCommerce 10.8.1.
+* Added nonce and capability checks to all plugin AJAX actions.
+* Restricted settings page scripts to the plugin settings screen.
+* Replaced the external Font Awesome dependency with WordPress Dashicons.
+* Improved order status validation and external link security.
+* Updated plugin icon and banner assets.
 
 = 2.1.0 =
 * Refactored main plugin bootstrap for better compatibility with modern WordPress and WooCommerce.

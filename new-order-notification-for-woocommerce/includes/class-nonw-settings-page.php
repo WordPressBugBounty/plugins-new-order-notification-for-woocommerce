@@ -22,8 +22,12 @@ class NONW_Settings_Page
         );
     }
 
-    public static function scripts()
+    public static function scripts($hook_suffix)
     {
+        if ('new-order-notification_page_new_order_notification_settings' !== $hook_suffix) {
+            return;
+        }
+
         wp_enqueue_script('jquery');
         wp_add_inline_script('jquery', "
             jQuery(function($){

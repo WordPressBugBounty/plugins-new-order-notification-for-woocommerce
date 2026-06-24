@@ -25,9 +25,9 @@ function new_order_notification_support()
                      <p class='support-title'>Software Engineer</p>
                      <p class='support-title'>Freelance Wordpress/Woocommerce Developer</p>
                      <div style='margin: 24px 0;'>
-                         <a class='support' href='https://www.linkedin.com/in/ey%C3%BCp-sabri-g%C3%BCl%C5%9Fen-809837186/' target='_blank'><i class='fa fa-linkedin-in'></i></a>  
-                         <a class='support' href='https://mrebabi.com/iletisim/' target='_blank'><i class='fas fa-envelope'></i></a>  
-                         <a class='support' href='https://mrebabi.com/' target='_blank'><i class='fas fa-globe'></i></a>  
+                         <a class='support' href='https://www.linkedin.com/in/ey%C3%BCp-sabri-g%C3%BCl%C5%9Fen-809837186/' target='_blank' rel='noopener noreferrer'><span class='dashicons dashicons-admin-links' aria-hidden='true'></span><span class='screen-reader-text'>LinkedIn</span></a>  
+                         <a class='support' href='https://mrebabi.com/iletisim/' target='_blank' rel='noopener noreferrer'><span class='dashicons dashicons-email' aria-hidden='true'></span><span class='screen-reader-text'>Email</span></a>  
+                         <a class='support' href='https://mrebabi.com/' target='_blank' rel='noopener noreferrer'><span class='dashicons dashicons-admin-site-alt3' aria-hidden='true'></span><span class='screen-reader-text'>Website</span></a>  
                      </div>
                  </div>
                  </div>";

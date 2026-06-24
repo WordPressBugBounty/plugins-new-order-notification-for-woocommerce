@@ -157,9 +157,13 @@ function getRecentOrderTable($settings)
             <td>
                 <div style='display:flex;justify-content:space-evenly;'>
                     <button class='btn' type='button' onclick='showOrderEditPopupButton(this.value)' value='" . esc_attr($orderId) . "'>
-                        <i class='fas fa-eye'></i>
+                        <span class='dashicons dashicons-visibility' aria-hidden='true'></span>
+                        <span class='screen-reader-text'>" . esc_html__('Preview order', 'new-order-notification-for-woocommerce') . "</span>
                     </button>
-                    <a href='" . esc_url($orderLink) . "' target='_blank'><i class='fas fa-link'></i></a>
+                    <a href='" . esc_url($orderLink) . "' target='_blank' rel='noopener noreferrer'>
+                        <span class='dashicons dashicons-admin-links' aria-hidden='true'></span>
+                        <span class='screen-reader-text'>" . esc_html__('Open order in a new tab', 'new-order-notification-for-woocommerce') . "</span>
+                    </a>
                 </div>
             </td>
         </tr>";
@@ -286,15 +290,16 @@ add_action('wp_ajax_show_order_edit_popup_action', 'show_order_edit_popup_action
 
 function show_order_edit_popup_action()
 {
-    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'noneni_action')) {
-        wp_send_json_error('Invalid nonce.');
-    }
+    check_ajax_referer('noneni_action', 'security');
 
     if (!current_user_can('edit_shop_orders')) {
-        wp_send_json_error('Unauthorized.');
+        wp_send_json_error(
+            array('message' => __('You are not allowed to view orders.', 'new-order-notification-for-woocommerce')),
+            403
+        );
     }
 
-    $orderId = absint($_POST['orderId']);
+    $orderId = isset($_POST['orderId']) ? absint($_POST['orderId']) : 0;
     if (!$orderId || !wc_get_order($orderId)) {
         wp_send_json_error('Could not find order.');
     }
@@ -307,25 +312,27 @@ add_action('wp_ajax_order_edit_status_action', 'order_edit_status_action');
 
 function order_edit_status_action()
 {
-    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'noneni_action')) {
-        wp_send_json_error('Invalid nonce.');
-    }
+    check_ajax_referer('noneni_action', 'security');
 
     if (!current_user_can('edit_shop_orders')) {
-        wp_send_json_error('Unauthorized.');
+        wp_send_json_error(
+            array('message' => __('You are not allowed to update orders.', 'new-order-notification-for-woocommerce')),
+            403
+        );
     }
 
-    $orderId = absint($_POST['orderId']);
-    $status = sanitize_text_field($_POST['status']);
+    $orderId = isset($_POST['orderId']) ? absint($_POST['orderId']) : 0;
+    $status = isset($_POST['status']) ? sanitize_key(wp_unslash($_POST['status'])) : '';
+    $allowedStatuses = wc_get_order_statuses();
 
-    if (!$orderId || !$status || !$order = wc_get_order($orderId)) {
+    if (!$orderId || !isset($allowedStatuses[$status]) || !$order = wc_get_order($orderId)) {
         wp_send_json_error('Could not find order.');
     }
 
     $order->set_status($status);
     $order->save();
 
-    echo esc_html(wc_get_order_statuses()[$status] ?? $status);
+    echo esc_html($allowedStatuses[$status]);
     wp_die();
 }
 
@@ -333,12 +340,13 @@ add_action('wp_ajax_re_render_recent_order_table', 're_render_recent_order_table
 
 function re_render_recent_order_table()
 {
-    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'noneni_action')) {
-        wp_send_json_error('Invalid nonce.');
-    }
+    check_ajax_referer('noneni_action', 'security');
 
     if (!current_user_can('edit_shop_orders')) {
-        wp_send_json_error('Unauthorized.');
+        wp_send_json_error(
+            array('message' => __('You are not allowed to view orders.', 'new-order-notification-for-woocommerce')),
+            403
+        );
     }
 
     $settings = getNewOrderNotificationSettings();
@@ -434,6 +442,15 @@ add_action('wp_ajax_detect_new_order', 'detect_new_order');
 
 function detect_new_order()
 {
+    check_ajax_referer('noneni_action', 'security');
+
+    if (!current_user_can('edit_shop_orders')) {
+        wp_send_json_error(
+            array('message' => __('You are not allowed to view orders.', 'new-order-notification-for-woocommerce')),
+            403
+        );
+    }
+
     $settings = getNewOrderNotificationSettings();
 
     if (!checkNewOrder($settings)) {
@@ -460,7 +477,8 @@ function new_order_notification_V2()
     <div id='newOrderDetectDiv' style='display:flex;align-items:center;gap:8px;'>
         <p id='activateNewOrderDetectText'>" . esc_html__('Activate new order alert: ', 'new-order-notification-for-woocommerce') . "</p>
         <button id='activateNewOrderDetect' class='btn' onclick='loopForNewOrderDetection(" . esc_attr($settings['refresh_time'] * 1000) . ")'>
-            <i id='activateNewOrderDetectIcon' class='fas fa-toggle-off fa-2x'></i>
+            <span id='activateNewOrderDetectIcon' class='dashicons dashicons-controls-play' aria-hidden='true'></span>
+            <span class='screen-reader-text'>" . esc_html__('Activate new order alerts', 'new-order-notification-for-woocommerce') . "</span>
         </button>
     </div>";
 
@@ -468,7 +486,7 @@ function new_order_notification_V2()
     ?>
     <script type="text/javascript">
         function loopForNewOrderDetection(loopDuration) {
-            document.getElementById("activateNewOrderDetectIcon").setAttribute("class", "fas fa-toggle-on fa-2x");
+            document.getElementById("activateNewOrderDetectIcon").setAttribute("class", "dashicons dashicons-controls-pause");
             document.getElementById("activateNewOrderDetectText").innerText = "<?php echo esc_js(__('New Order Alert activated.', 'new-order-notification-for-woocommerce')); ?>";
 
             jQuery.post(ajaxurl, {
